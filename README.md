@@ -1,20 +1,13 @@
 # hive-go
 Dependency Injection container for Go
 
-## Example
+## Getting Started
 
-```go
-package main
-
-import (
-    "reflect"
-    "github.com/tiaanl/hive-go"
-)
-
-func main() {
-    // Store a users repository in the container.
-    container := hive.New()
-    usersRepository := users.NewRepository()
-    container.Set(hive.InterfaceOf((*users.Repository)(nil)), reflect.ValueOf(usersRepository))
-}
+```bash
+go get github.com/tiaanl/hive-go
 ```
+
+## Examples
+
+### simple.go
+A simple example of now to put a service into the container.
