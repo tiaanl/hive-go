@@ -2,12 +2,12 @@ package hive
 
 import "reflect"
 
-// To get a Type object pointing to an interface, pass in a pointer to an
+// To get a `reflect.Type` object pointing to an interface, pass in a pointer to an
 // interface typed object. Example:
 //
-// InterfaceOf((*Repository)(nil))
+// ```InterfaceOf((*Repository)(nil))```
 //
-// will return a Type object with Kind() of Repository interface.
+// will return a `reflect.Type` object with `Kind()` of `Repository`.
 func InterfaceOf(value interface{}) reflect.Type {
 	t := reflect.TypeOf(value)
 
