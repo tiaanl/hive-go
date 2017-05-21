@@ -1,0 +1,17 @@
+language: go
+sudo: false
+
+matrix:
+  include:
+    - go: 1.6
+    - go: 1.7
+    - go: 1.8
+    - go: tip
+
+install:
+  - go get github.com/Masterminds/glide
+
+script:
+#  - go tool vet github.com/tiaanl/hive-go
+  - glide install
+  - go test -v -race github.com/tiaanl/hive-go
