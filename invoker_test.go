@@ -13,8 +13,8 @@ func Test_Invoker_WeGetTheValuesWeAskFor(t *testing.T) {
 	intValue := 10
 
 	container := New()
-	container.Set(reflect.TypeOf(stringValue), reflect.ValueOf(stringValue))
-	container.Set(reflect.TypeOf(intValue), reflect.ValueOf(intValue))
+	container.Singleton(reflect.TypeOf(stringValue), reflect.ValueOf(stringValue))
+	container.Singleton(reflect.TypeOf(intValue), reflect.ValueOf(intValue))
 
 	testValue := ""
 
@@ -29,7 +29,7 @@ func Test_Invoker_WeGetReturnValues(t *testing.T) {
 	value := "test"
 
 	container := New()
-	container.Set(reflect.TypeOf(value), reflect.ValueOf(value))
+	container.Singleton(reflect.TypeOf(value), reflect.ValueOf(value))
 
 	returnValues, err := container.Invoke(func(s string) string {
 		return s + s

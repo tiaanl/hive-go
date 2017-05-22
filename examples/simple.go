@@ -24,7 +24,7 @@ func main() {
 	usersRepository := &repository{}
 
 	// Set the users repository in the container.
-	container.Set(reflect.TypeOf(usersRepository), reflect.ValueOf(usersRepository))
+	container.Singleton(reflect.TypeOf(usersRepository), reflect.ValueOf(usersRepository))
 
 	// Now we can get the repository from the container by it's interface.
 	resultValue := container.Get(hive.InterfaceOf((*Repository)(nil)))

@@ -28,15 +28,15 @@ type container struct {
 	parent Container
 }
 
-func (c *container) Set(t reflect.Type, v reflect.Value) TypeMapper {
-	c.values[t] = &instanceValueWrapper{
+func (c *container) Singleton(t reflect.Type, v reflect.Value) TypeMapper {
+	c.values[t] = &singletonValueWrapper{
 		value: v,
 	}
 	return c
 }
 
-func (c *container) SetLazy(t reflect.Type, fn func(TypeMapper) interface{}) TypeMapper {
-	c.values[t] = &funcValueWrapper{
+func (c *container) LazySingleton(t reflect.Type, fn func(TypeMapper) interface{}) TypeMapper {
+	c.values[t] = &lazySingletonValueWrapper{
 		container: c,
 		fn:        fn,
 	}
@@ -61,13 +61,7 @@ func (c *container) Get(t reflect.Type) reflect.Value {
 
 	// If we found a wrapper, we just return it's value.
 	if wrapper != nil {
-		value := wrapper.Get()
-
-		// If the wrapper is lazy, then we cache the value in an immediate
-		// wrapper.
-		c.Set(t, value)
-
-		return value
+		return wrapper.Get()
 	}
 
 	// We could not satisfy the request for a value, but if we have a parent,

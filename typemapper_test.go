@@ -16,7 +16,7 @@ func Test_TypeMapper_SettingAndGetting(t *testing.T) {
 	value := &object{a: 10}
 
 	container := New()
-	container.Set(InterfaceOf((*Object)(nil)), reflect.ValueOf(value))
+	container.Singleton(InterfaceOf((*Object)(nil)), reflect.ValueOf(value))
 
 	testValue := container.Get(InterfaceOf((*Object)(nil)))
 	assert.True(t, testValue.IsValid())
@@ -33,7 +33,7 @@ func Test_TypeMapper_MakeSureLazyIsLazy(t *testing.T) {
 	createCount := 0
 
 	container := New()
-	container.SetLazy(InterfaceOf((*Object)(nil)), func(c TypeMapper) interface{} {
+	container.LazySingleton(InterfaceOf((*Object)(nil)), func(c TypeMapper) interface{} {
 		newValue := &object{a: 10}
 		createCount = createCount + 1
 		return newValue
@@ -88,7 +88,7 @@ func Test_TypeMapper_GetValueByInterfaceImplemented(t *testing.T) {
 	}
 
 	// Store the value in the container using it's own type.
-	container.Set(reflect.TypeOf(value), reflect.ValueOf(value))
+	container.Singleton(reflect.TypeOf(value), reflect.ValueOf(value))
 
 	// See if we can get it as a stringGetter.
 	testValue := container.Get(InterfaceOf((*stringGetter)(nil)))
@@ -107,7 +107,7 @@ func Test_TypeMapper_GetValueFromParent(t *testing.T) {
 		intValue:    10,
 	}
 
-	parentContainer.Set(reflect.TypeOf(value), reflect.ValueOf(value))
+	parentContainer.Singleton(reflect.TypeOf(value), reflect.ValueOf(value))
 
 	// Create a child container, with the original as the parent.
 	childContainer := NewWithParent(parentContainer)
@@ -126,7 +126,7 @@ func Test_TypeMapper_GetChildValueIfItExistsInTheChildAndParent(t *testing.T) {
 	parentValue := &realGetter{
 		stringValue: "parent",
 	}
-	parentContainer.Set(reflect.TypeOf(parentValue), reflect.ValueOf(parentValue))
+	parentContainer.Singleton(reflect.TypeOf(parentValue), reflect.ValueOf(parentValue))
 
 	// Create a child container and set a new realGetter in it with the same
 	// type as the one in the parent.
@@ -134,7 +134,7 @@ func Test_TypeMapper_GetChildValueIfItExistsInTheChildAndParent(t *testing.T) {
 	childValue := &realGetter{
 		stringValue: "child",
 	}
-	childContainer.Set(reflect.TypeOf(childValue), reflect.ValueOf(childValue))
+	childContainer.Singleton(reflect.TypeOf(childValue), reflect.ValueOf(childValue))
 
 	// If we get the value from the container, then we should get the child value.
 	testValue := childContainer.Get(reflect.TypeOf(childValue))

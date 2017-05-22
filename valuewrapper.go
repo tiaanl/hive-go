@@ -6,19 +6,25 @@ type valueWrapper interface {
 	Get() reflect.Value
 }
 
-type instanceValueWrapper struct {
+type singletonValueWrapper struct {
 	value reflect.Value
 }
 
-func (ivw *instanceValueWrapper) Get() reflect.Value {
-	return ivw.value
+func (w *singletonValueWrapper) Get() reflect.Value {
+	return w.value
 }
 
-type funcValueWrapper struct {
+type lazySingletonValueWrapper struct {
 	container Container
 	fn        func(TypeMapper) interface{}
+	value     reflect.Value
 }
 
-func (fvw *funcValueWrapper) Get() reflect.Value {
-	return reflect.ValueOf(fvw.fn(fvw.container))
+func (w *lazySingletonValueWrapper) Get() reflect.Value {
+	// Cache the value so that we are a singleton.
+	if w.value.IsValid() {
+		return w.value
+	}
+	w.value = reflect.ValueOf(w.fn(w.container))
+	return w.value
 }
