@@ -2,8 +2,8 @@ package hive
 
 import "reflect"
 
-// To get a reflect.Type object pointing to an interface, pass in a pointer to an interface typed
-// object. Example:
+// InterfaceOf returns a reflect.Type object pointing to an interface if passed a pointer to an
+// interface. Example:
 //
 // InterfaceOf((*Repository)(nil))
 //
