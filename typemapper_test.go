@@ -16,7 +16,9 @@ func Test_TypeMapper_SettingAndGetting(t *testing.T) {
 	value := &object{a: 10}
 
 	container := New()
-	container.Singleton(InterfaceOf((*Object)(nil)), reflect.ValueOf(value))
+	container.Singleton(InterfaceOf((*Object)(nil)), func(_ TypeMapper) reflect.Value {
+		return reflect.ValueOf(value)
+	})
 
 	testValue := container.Get(InterfaceOf((*Object)(nil)))
 	assert.True(t, testValue.IsValid())
@@ -33,10 +35,10 @@ func Test_TypeMapper_MakeSureLazyIsLazy(t *testing.T) {
 	createCount := 0
 
 	container := New()
-	container.LazySingleton(InterfaceOf((*Object)(nil)), func(c TypeMapper) interface{} {
+	container.Singleton(InterfaceOf((*Object)(nil)), func(c TypeMapper) reflect.Value {
 		newValue := &object{a: 10}
 		createCount = createCount + 1
-		return newValue
+		return reflect.ValueOf(newValue)
 	})
 
 	// At this point we should not have created a new object yet.
@@ -88,7 +90,9 @@ func Test_TypeMapper_GetValueByInterfaceImplemented(t *testing.T) {
 	}
 
 	// Store the value in the container using it's own type.
-	container.Singleton(reflect.TypeOf(value), reflect.ValueOf(value))
+	container.Singleton(reflect.TypeOf(value), func(_ TypeMapper) reflect.Value {
+		return reflect.ValueOf(value)
+	})
 
 	// See if we can get it as a stringGetter.
 	testValue := container.Get(InterfaceOf((*stringGetter)(nil)))
@@ -107,7 +111,9 @@ func Test_TypeMapper_GetValueFromParent(t *testing.T) {
 		intValue:    10,
 	}
 
-	parentContainer.Singleton(reflect.TypeOf(value), reflect.ValueOf(value))
+	parentContainer.Singleton(reflect.TypeOf(value), func(_ TypeMapper) reflect.Value {
+		return reflect.ValueOf(value)
+	})
 
 	// Create a child container, with the original as the parent.
 	childContainer := NewWithParent(parentContainer)
@@ -126,7 +132,9 @@ func Test_TypeMapper_GetChildValueIfItExistsInTheChildAndParent(t *testing.T) {
 	parentValue := &realGetter{
 		stringValue: "parent",
 	}
-	parentContainer.Singleton(reflect.TypeOf(parentValue), reflect.ValueOf(parentValue))
+	parentContainer.Singleton(reflect.TypeOf(parentValue), func(_ TypeMapper) reflect.Value {
+		return reflect.ValueOf(parentValue)
+	})
 
 	// Create a child container and set a new realGetter in it with the same
 	// type as the one in the parent.
@@ -134,7 +142,9 @@ func Test_TypeMapper_GetChildValueIfItExistsInTheChildAndParent(t *testing.T) {
 	childValue := &realGetter{
 		stringValue: "child",
 	}
-	childContainer.Singleton(reflect.TypeOf(childValue), reflect.ValueOf(childValue))
+	childContainer.Singleton(reflect.TypeOf(childValue), func(_ TypeMapper) reflect.Value {
+		return reflect.ValueOf(childValue)
+	})
 
 	// If we get the value from the container, then we should get the child value.
 	testValue := childContainer.Get(reflect.TypeOf(childValue))

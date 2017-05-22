@@ -12,7 +12,9 @@ func Test_DefaultContainer_MultipleCallsShouldReturnTheSameContainer(t *testing.
 
 	value := "test"
 
-	container.Singleton(reflect.TypeOf(value), reflect.ValueOf(value))
+	container.Singleton(reflect.TypeOf(value), func(_ TypeMapper) reflect.Value {
+		return reflect.ValueOf(value)
+	})
 
 	func() {
 		container := DefaultContainer()

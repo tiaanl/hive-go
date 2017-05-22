@@ -2,16 +2,16 @@ package hive
 
 import "reflect"
 
+// ValueFunc represents a function that return a reflect.Value of the object that you want to store
+// in a container.
+type ValueFunc func(TypeMapper) reflect.Value
+
+// TypeMapper is the interface for storing and retrieving values from a container.
 type TypeMapper interface {
-	// Set a value in the container linked to the type provided.  When getting
-	// this value from the container, the caller will always receive the same
-	// instance of the value.
-	Singleton(reflect.Type, reflect.Value) TypeMapper
-
-	// Set a factory function for the provided type.  This will allow the
-	// instance only to be created once the type is requested.
-	LazySingleton(reflect.Type, func(TypeMapper) interface{}) TypeMapper
-
 	// GetString the value stored in the container based on the type provided.
 	Get(reflect.Type) reflect.Value
+
+	// Set a value in the container that acts as a singleton.  Getting the value multiple times will
+	// always return the same instance.
+	Singleton(reflect.Type, ValueFunc) TypeMapper
 }
