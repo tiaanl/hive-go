@@ -73,8 +73,8 @@ func (c *container) Invoke(f interface{}) ([]reflect.Value, error) {
 	for i := 0; i < t.NumIn(); i++ {
 		argType := t.In(i)
 		val := c.Get(argType)
-		if !val.IsValid() || val.Type().Kind() != argType.Kind() {
-			return nil, fmt.Errorf("Value not found or invalid for type %v", argType)
+		if !val.IsValid() {
+			return nil, fmt.Errorf("Value not found for type %v", argType)
 		}
 
 		in[i] = val

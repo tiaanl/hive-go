@@ -12,6 +12,10 @@ func Test_Invoker_WeGetTheValuesWeAskFor(t *testing.T) {
 	stringValue := "test"
 	intValue := 10
 
+	rg := &realGetter{
+		intValue: 10,
+	}
+
 	container := New()
 	container.Singleton(reflect.TypeOf(stringValue), func(_ TypeMapper) reflect.Value {
 		return reflect.ValueOf(stringValue)
@@ -19,14 +23,18 @@ func Test_Invoker_WeGetTheValuesWeAskFor(t *testing.T) {
 	container.Singleton(reflect.TypeOf(intValue), func(_ TypeMapper) reflect.Value {
 		return reflect.ValueOf(intValue)
 	})
+	container.Singleton(reflect.TypeOf(rg), func(_ TypeMapper) reflect.Value {
+		return reflect.ValueOf(rg)
+	})
 
 	testValue := ""
 
-	_, err := container.Invoke(func(s string, i int) {
-		testValue = fmt.Sprintf("%s%d", s, i)
+	// intGetter is an interface, but we have a type of *realGetter in the container.
+	_, err := container.Invoke(func(s string, i int, ig intGetter) {
+		testValue = fmt.Sprintf("%s%d%d", s, i, ig.GetInt())
 	})
 	assert.NoError(t, err)
-	assert.Equal(t, "test10", testValue)
+	assert.Equal(t, "test1010", testValue)
 }
 
 func Test_Invoker_WeGetReturnValues(t *testing.T) {
